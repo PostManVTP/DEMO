@@ -19,10 +19,17 @@ app.get("/", (req, res) => {
 
     console.log("User vào Page1:", req.ip);
 
+    res.sendFile(path.join(frontendPath, "index.html"));
+
+});
+// PAGE drone
+app.get("/dcs", (req, res) => {
+
+    console.log("User vào Page drone:", req.ip);
+
     res.sendFile(path.join(frontendPath, "index2.html"));
 
 });
-
 // PAGE 2
 app.get("/page2", (req, res) => {
 
