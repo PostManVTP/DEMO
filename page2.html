@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Page 2</title>
+</head>
+
+<body>
+
+<h1>Đây là Page 2</h1>
+
+<a href="/">
+<button onclick="loadImage()">Hiển thị ảnh 2 - TEST WEB leu leu 123</button>
+<button onclick="goPage1()">Quay về Page 1</button>
+</a>
+<script>
+
+async function loadImage() {
+
+    const response = await fetch("http://192.168.0.102:3000/get-image");
+
+    const data = await response.json();
+
+    document.getElementById("img").src = data.image;
+
+}
+function goPage1(){
+
+    window.location.href = "/";
+
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Web</title>
+</head>
+
+<body>
+
+<h2>Demo Frontend - Backend</h2>
+
+<button onclick="loadImage()">Hiển thị ảnh - TEST WEB leu leu 123</button>
+<button onclick="goPage2()">Sang Page 2</button>
+
+<br><br>
+
+<img id="img" width="400"/>
+
+<script>
+
+async function loadImage() {
+
+    const response = await fetch("http://192.168.0.102:3000/get-image");
+
+    const data = await response.json();
+
+    document.getElementById("img").src = data.image;
+
+}
+function goPage2(){
+
+    window.location.href = "/page2";
+
+}
+
+</script>
+
+</script>
+
+</body>
+</html>
