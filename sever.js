@@ -19,7 +19,7 @@ app.get("/", (req, res) => {
 
     console.log("User vào Page1:", req.ip);
 
-    res.sendFile(path.join(frontendPath, "index.html"));
+    res.sendFile(path.join(frontendPath, "index2.html"));
 
 });
 
