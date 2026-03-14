@@ -15,28 +15,22 @@ const frontendPath = "frontend";
 // serve toàn bộ file frontend
 app.use(express.static(frontendPath));
 
-// khi truy cập root sẽ load index.html
-app.get("/", (req, res) => {
-
-    console.log("Truy cập từ:", req.ip);
-
-    res.sendFile(path.join(frontendPath, "index.html"));
-
-});
 // PAGE 1
 app.get("/", (req, res) => {
 
-    console.log("User vào Page1 từ:", req.ip);
+    console.log("User vào Page1:", req.ip);
 
     res.sendFile(path.join(frontendPath, "index.html"));
+
 });
 
 // PAGE 2
 app.get("/page2", (req, res) => {
 
-    console.log("User vào Page2 từ:", req.ip);
+    console.log("User vào Page2:", req.ip);
 
     res.sendFile(path.join(frontendPath, "page2.html"));
+
 });
 
 // API trả ảnh random
