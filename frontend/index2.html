@@ -1,0 +1,431 @@
+```html
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+<meta charset="UTF-8">
+<title>Drone Monitoring Dashboard</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<link rel="stylesheet"
+href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Segoe UI,Arial;
+}
+
+body{
+background:#f3f5f7;
+}
+
+.header{
+height:60px;
+background:#e30613;
+color:white;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 25px;
+font-size:18px;
+font-weight:bold;
+}
+
+.layout{
+display:flex;
+height:calc(100vh - 60px);
+}
+
+.sidebar{
+width:230px;
+background:white;
+border-right:1px solid #ddd;
+}
+
+.sidebar ul{
+list-style:none;
+}
+
+.sidebar li{
+padding:14px 20px;
+display:flex;
+gap:10px;
+align-items:center;
+cursor:pointer;
+}
+
+.sidebar li:hover{
+background:#f5f5f5;
+}
+
+.sidebar .active{
+color:#e30613;
+font-weight:bold;
+}
+
+.main{
+flex:1;
+overflow:auto;
+}
+
+.filters{
+padding:20px;
+}
+
+.filters button{
+padding:6px 12px;
+border:none;
+border-radius:6px;
+margin-right:8px;
+background:#ddd;
+cursor:pointer;
+}
+
+.filters .active{
+background:#e30613;
+color:white;
+}
+
+.mapBox{
+height:420px;
+margin:0 20px 20px 20px;
+border-radius:12px;
+overflow:hidden;
+position:relative;
+}
+
+#map{
+height:100%;
+width:100%;
+}
+
+.stats{
+position:absolute;
+bottom:20px;
+left:20px;
+background:white;
+padding:15px;
+border-radius:10px;
+box-shadow:0 6px 20px rgba(0,0,0,0.15);
+z-index:500;
+width:210px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+margin-top:10px;
+}
+
+.red{color:#e30613}
+.green{color:#16a34a}
+.orange{color:#ff8c00}
+.blue{color:#2979ff}
+
+.tableBox{
+margin:0 20px 20px 20px;
+background:white;
+border-radius:12px;
+overflow:hidden;
+}
+
+.tableTitle{
+background:#e30613;
+color:white;
+padding:14px 20px;
+font-weight:bold;
+}
+
+.tableScroll{
+max-height:320px;
+overflow:auto;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+thead{
+position:sticky;
+top:0;
+background:#f3f3f3;
+}
+
+th,td{
+padding:10px;
+border-bottom:1px solid #eee;
+font-size:14px;
+text-align:left;
+}
+
+.status{
+padding:4px 10px;
+border-radius:6px;
+font-size:12px;
+background:#d4f6e1;
+color:#0c8a4b;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+<div>Viettel Post - Drone Control System</div>
+<i class="fa fa-bars"></i>
+</div>
+
+<div class="layout">
+
+<div class="sidebar">
+<ul>
+<li><i class="fa fa-chart-line"></i> Tổng quan</li>
+<li><i class="fa fa-box"></i> Đơn hàng</li>
+<li><i class="fa fa-route"></i> Chuyến</li>
+<li><i class="fa fa-truck"></i> Phương tiện</li>
+<li class="active"><i class="fa fa-satellite"></i> Giám sát</li>
+<li><i class="fa fa-user"></i> Tài xế</li>
+<li><i class="fa fa-handshake"></i> Đối tác</li>
+<li><i class="fa fa-tags"></i> Bảng giá</li>
+<li><i class="fa fa-chart-bar"></i> Báo cáo</li>
+<li><i class="fa fa-credit-card"></i> Thanh toán chi phí</li>
+<li><i class="fa fa-gear"></i> Thiết lập</li>
+</ul>
+</div>
+
+<div class="main">
+
+<div class="filters">
+<button class="active">Sự cố truyền thông</button>
+<button>Vật cản</button>
+<button>Sự cố pin</button>
+<button>Sự cố hệ thống</button>
+<button>Bình thường</button>
+</div>
+
+<div class="mapBox">
+
+<div id="map"></div>
+
+<div class="stats">
+
+<h4>Tổng drone</h4>
+
+<div class="grid">
+<div class="red" id="total">0</div>
+<div class="green" id="run">0</div>
+<div class="orange" id="alert">0</div>
+<div class="blue" id="stop">0</div>
+<div>Tổng</div>
+<div>Hoạt động</div>
+<div>Cảnh báo</div>
+<div>Ngừng</div>
+</div>
+
+</div>
+
+</div>
+
+<div class="tableBox">
+
+<div class="tableTitle">Giám sát drone</div>
+
+<div class="tableScroll">
+
+<table>
+
+<thead>
+
+<tr>
+<th>Mã drone</th>
+<th>Loại thiết bị bay</th>
+<th>Phi công</th>
+<th>Đơn hàng</th>
+<th>Trạng thái đơn</th>
+<th>Mã chuyến</th>
+<th>Cảnh báo</th>
+<th>Trạng thái</th>
+</tr>
+
+</thead>
+
+<tbody id="tableData"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+
+/* MAP */
+
+const map=L.map('map').setView([21.23,106.15],13)
+
+L.tileLayer(
+'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+{maxZoom:19}
+).addTo(map)
+
+/* DRONE ICON */
+
+const droneIcon=L.icon({
+iconUrl:'drone1.png',
+iconSize:[50,50],
+iconAnchor:[25,25]
+})
+
+/* TỌA ĐỘ */
+
+const start=[21.232814,106.120019]
+const end=[21.246474,106.179714]
+
+/* VẼ ĐƯỜNG BAY */
+
+L.polyline([start,end],{color:'red',weight:4}).addTo(map)
+
+/* DRONE MARKER */
+
+const drone=L.marker(start,{icon:droneIcon}).addTo(map)
+
+/* BAY */
+
+let progress=0
+const speed=0.002
+
+function flyDrone(){
+
+progress+=speed
+
+if(progress>1) progress=0
+
+let lat=start[0]+(end[0]-start[0])*progress
+let lng=start[1]+(end[1]-start[1])*progress
+
+drone.setLatLng([lat,lng])
+
+}
+
+setInterval(flyDrone,50)
+
+/* DATA */
+
+const alerts=["Không","Sự cố truyền thông","Pin yếu","Mất tín hiệu"]
+const orders=["Chờ xác nhận","Đang vận chuyển","Đang giao"]
+
+let drones=[]
+
+for(let i=1;i<=30;i++){
+
+drones.push({
+id:"VTP"+String(i).padStart(3,"0"),
+pilot:"pilot"+i,
+order:"9248769"+(400+i),
+orderStatus:"Đang vận chuyển",
+alert:"Không",
+status:"Hoạt động"
+})
+
+}
+
+/* RENDER TABLE */
+
+function renderTable(){
+
+let html=""
+
+drones.forEach(d=>{
+
+html+=`
+
+<tr>
+<td>${d.id}</td>
+<td>Đa cánh quạt</td>
+<td>${d.pilot}</td>
+<td>${d.order}</td>
+<td>${d.orderStatus}</td>
+<td>${d.order}</td>
+<td>${d.alert}</td>
+<td><span class="status">${d.status}</span></td>
+</tr>
+
+`
+
+})
+
+document.getElementById("tableData").innerHTML=html
+
+updateStats()
+
+}
+
+/* STATS */
+
+function updateStats(){
+
+let running=0
+let stopped=0
+let alertCount=0
+
+drones.forEach(d=>{
+
+if(d.status==="Hoạt động") running++
+else stopped++
+
+if(d.alert!=="Không") alertCount++
+
+})
+
+document.getElementById("total").innerText=drones.length
+document.getElementById("run").innerText=running
+document.getElementById("stop").innerText=stopped
+document.getElementById("alert").innerText=alertCount
+
+}
+
+/* UPDATE DATA */
+
+function updateDrone(){
+
+let index=Math.floor(Math.random()*drones.length)
+
+let drone=drones[index]
+
+drone.orderStatus=orders[Math.floor(Math.random()*3)]
+drone.alert=alerts[Math.floor(Math.random()*4)]
+
+if(Math.random()>0.9){
+drone.status="Ngừng"
+}else{
+drone.status="Hoạt động"
+}
+
+renderTable()
+
+}
+
+renderTable()
+
+setInterval(updateDrone,50)
+
+</script>
+
+</body>
+</html>
+```
