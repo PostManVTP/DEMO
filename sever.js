@@ -4,14 +4,13 @@ const path = require("path");
 
 const app = express();
 
-const PORT = 3000;
 const HOST = "0.0.0.0";
-
+const PORT = process.env.PORT || 3000;
 // cho phép truy cập từ thiết bị khác trong mạng
 app.use(cors());
 
 // đường dẫn tới thư mục frontend
-const frontendPath = "C:\\Users\\Jarvis\\DEMO\\frontend";
+const frontendPath = "DEMO\\frontend";
 
 // serve toàn bộ file frontend
 app.use(express.static(frontendPath));
