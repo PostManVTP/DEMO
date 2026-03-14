@@ -10,8 +10,7 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 
 // đường dẫn tới thư mục frontend
-const frontendPath = "frontend";
-
+const frontendPath = path.join(__dirname, "frontend");
 // serve toàn bộ file frontend
 app.use(express.static(frontendPath));
 
